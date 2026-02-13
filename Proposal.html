@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>For Someone Special ❤️</title>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{
+    font-family:Arial,sans-serif;
+    overflow:hidden;
+    background:linear-gradient(135deg,#ffd9e8,#fff2f7);
+}
+
+/* ========= CANVAS FOR FIREWORKS ========= */
+#fwCanvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 5; 
+    pointer-events: none;
+}
+
+/* ========= FLOATING HEARTS ========= */
+.heart{
+    position:absolute;
+    color:#ff8fb1;
+    opacity:.45;
+    animation:float linear infinite;
+    pointer-events: none;
+}
+@keyframes float{
+    from{transform:translateY(100vh);}
+    to{transform:translateY(-10vh);}
+}
+
+/* ========= ENVELOPE ========= */
+#envelopeScreen{
+    position:fixed; inset:0;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background:#ffe6ef;
+    z-index:100;
+}
+.envelope{
+    width:260px;height:180px;
+    background:#ff5d8f;
+    position:relative;
+    border-radius:8px;
+    cursor:pointer;
+    box-shadow:0 10px 25px rgba(0,0,0,.2);
+}
+.envelope::before{
+    content:'';
+    position:absolute;
+    top:0;left:0;right:0;
+    margin:auto;
+    width:0;height:0;
+    border-left:130px solid transparent;
+    border-right:130px solid transparent;
+    border-top:90px solid #ff7aa5;
+    transform-origin:top;
+    transition:.6s;
+}
+.envelope.open::before{transform:rotateX(180deg);}
+.envelope-text{
+    position:absolute;
+    bottom:20px;
+    width:100%;
+    text-align:center;
+    color:white;
+    font-weight:bold;
+}
+
+/* ========= MAIN CONTENT ========= */
+#mainContent{
+    display:none;
+    width:100vw;height:100vh;
+    position:relative;
+}
+
+.note{
+    position:absolute;
+    width:230px;
+    background:#f8edc5;
+    padding:18px;
+    border-radius:6px;
+    box-shadow:0 8px 18px rgba(0,0,0,.2);
+    z-index: 10;
+}
+.note h3{font-family:cursive;font-size:28px;margin-bottom:8px;}
+.pin{
+    position:absolute;
+    top:-14px;
+    left:50%;
+    transform:translateX(-50%);
+    width:28px;height:28px;
+    background:#e7302a;
+    border-radius:50%;
+    box-shadow:0 5px 0 #c3201b;
+}
+
+/* Proposal box - Centered */
+#proposal{
+    position:absolute;
+    top:50%;left:50%;
+    transform:translate(-50%,-50%);
+    background:rgba(255,255,255,.9);
+    padding:40px 50px;
+    border-radius:25px;
+    text-align:center;
+    box-shadow:0 10px 25px rgba(0,0,0,.1);
+    z-index: 20;
+    min-width: 320px;
+}
+#question{
+    font-size:32px;
+    color:#ff2e63;
+    min-height:50px;
+    margin-bottom:30px;
+}
+
+.btn-group{
+    display:flex;
+    justify-content: center;
+    align-items: center;
+    gap: 30px; /* Space between buttons */
+}
+
+button{
+    padding:14px 30px;
+    border:none;
+    border-radius:30px;
+    font-size:20px;
+    font-weight: bold;
+    cursor:pointer;
+    transition: transform 0.2s ease;
+}
+#yes{background:#ff4d6d; color:white;}
+#yes:hover{transform: scale(1.1);}
+
+#no{
+    background:#999;
+    color:white;
+    position: relative; /* Starts relative to the group, switches to fixed on hover */
+    z-index: 30;
+    transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+/* ========= CELEBRATION ========= */
+#celebrate{
+    position:fixed;
+    inset:0;
+    display:none;
+    justify-content:center;
+    align-items:center;
+    flex-direction:column;
+    text-align:center;
+    z-index:50;
+    pointer-events: none;
+}
+#celebrate h1{
+    font-size:65px;
+    color:#ff2e63;
+    margin-bottom: 10px;
+}
+#celebrate h2{
+    font-size:30px;
+    color:#ff5d8f;
+    margin-bottom: 20px;
+}
+#celebrate h3{
+    font-size:30px;
+    color:#ff0051;
+    margin-bottom: 20px;
+}
+#celebrate .love-text {
+    position: relative;
+    font-size: 40px;
+    color: #ff2e63;
+    font-family: 'cursive', sans-serif;
+    animation: heartbeat 1.2s infinite;
+}
+
+@keyframes heartbeat {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
+/* ========= MUSIC UI ========= */
+#musicControl{
+    position:fixed;
+    top:12px;
+    right:16px;
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding:6px 12px;
+    border-radius:25px;
+    background:rgba(255,255,255,0.25);
+    backdrop-filter:blur(8px);
+    z-index:200;
+}
+#musicBtn{
+    width:40px;height:40px;
+    border:none;
+    border-radius:50%;
+    background:#ff4d6d;
+    color:white;
+    cursor:pointer;
+}
+#bars{display:flex;gap:3px;height:16px;}
+#bars span{
+    width:3px;
+    background:#ff4d6d;
+    animation:equalize .6s infinite alternate;
+}
+#bars.paused span{animation:none;height:4px;}
+@keyframes equalize{ from{height:4px;} to{height:16px;} }
+</style>
+</head>
+
+<body>
+
+<canvas id="fwCanvas"></canvas>
+
+<audio id="bgmusic" loop>
+    <source src="/Users/kalpakjain/Kalpak stuff/Music required/I found a love for me.....mp3" type="audio/mpeg">
+</audio>
+
+<div id="musicControl">
+    <div id="bars" class="paused">
+        <span></span><span></span><span></span><span></span>
+    </div>
+    <button id="musicBtn">▶</button>
+</div>
+
+<div id="envelopeScreen">
+    <div class="envelope" id="env">
+        <div class="envelope-text">Open Me 💌</div>
+    </div>
+</div>
+
+<div id="mainContent">
+    <div class="note interactive-note" style="top:40px;left:40px;transform:rotate(-2deg);">
+        <div class="pin"></div>
+        <h3>My Safe Place</h3>
+        <p>No matter how hard the day gets, your smile feels like home to me. Thank you for being my peace, my comfort, and my biggest support. Life feels lighter and sweeter with you by my side.💕</p>
+    </div>
+
+    <div class="note interactive-note" style="top:60px;right:40px;background:#ffe3e3;transform:rotate(2deg);">
+        <div class="pin"></div>
+        <h3>My Future with Youe</h3>
+        <p>When I think about the future, I don’t imagine big plans first — I imagine you. Growing old together, laughing together, and building a life full of love is my favorite dream.✨</p>
+    </div>
+
+    <div class="note interactive-note" style="bottom:60px;left:50px;background:#e3f2fd;transform:rotate(3deg);">
+        <div class="pin"></div>
+        <h3>Little Moments, Big Love</h3>
+        <p>I love the small things we share — silly jokes, quiet talks, and simple moments together. They may seem ordinary, but with you, they become the most beautiful memories of my life.</p>
+    </div>
+
+    <div class="note interactive-note" style="bottom:40px;right:60px;background:#f3e5f5;transform:rotate(-4deg);">
+        <div class="pin"></div>
+        <h3>Forever Gratitude.\</h3>
+        <p>I feel lucky every single day to have you in my life. Your kindness, patience, and love inspire me to be a better person. I promise to keep choosing you, every day, in every situation. 🍀</p>
+    </div>
+
+    <div id="proposal">
+        <div id="question"></div>
+        <div class="btn-group">
+            <button id="yes">YES 💖</button>
+            <button id="no">NO 🙈</button>
+        </div>
+    </div>
+</div>
+
+<div id="celebrate">
+    <h1>I Just Got Lucky❤️</h1>
+    <h2>You just made my day, thank you for being in my life 🌸✨</h2>
+
+    <h3>I love You !</h3><div class="love-text">❤️<b></div>
+</div>
+
+<script>
+/* 1. Background Hearts */
+for(let i=0;i<25;i++){
+    let h=document.createElement("div");
+    h.className="heart"; h.innerHTML="♥";
+    h.style.left=Math.random()*100+"vw";
+    h.style.fontSize=(15+Math.random()*25)+"px";
+    h.style.animationDuration=(6+Math.random()*8)+"s";
+    document.body.appendChild(h);
+}
+
+/* 2. Envelope Logic */
+const env = document.getElementById('env');
+const envelopeScreen = document.getElementById('envelopeScreen');
+const mainContent = document.getElementById('mainContent');
+
+env.onclick=()=>{
+    env.classList.add("open");
+    setTimeout(()=>{
+        envelopeScreen.style.display="none";
+        mainContent.style.display="block";
+        typeText("Will you be my Valentine? ❤️");
+    },700);
+};
+
+function typeText(text){
+    let i=0, q=document.getElementById("question");
+    q.innerHTML = "";
+    let t=setInterval(()=>{
+        q.innerHTML+=text[i++];
+        if(i>=text.length) clearInterval(t);
+    },80);
+}
+
+/* 3. Restricted NO Button Escape */
+const noBtn = document.getElementById("no");
+noBtn.addEventListener("mouseenter", () => {
+    noBtn.style.position = "fixed";
+    
+    // Safety padding so it doesn't touch the screen edge
+    const padding = 50; 
+    
+    // Limits based on screen size minus button size and padding
+    const maxX = window.innerWidth - noBtn.offsetWidth - padding;
+    const maxY = window.innerHeight - noBtn.offsetHeight - padding;
+    
+    // Generate new position within the safe frame
+    const newX = Math.max(padding, Math.random() * maxX);
+    const newY = Math.max(padding, Math.random() * maxY);
+    
+    noBtn.style.left = `${newX}px`;
+    noBtn.style.top = `${newY}px`;
+});
+
+/* 4. Fireworks System */
+const canvas = document.getElementById('fwCanvas');
+const ctx = canvas.getContext('2d');
+let particles = [];
+
+function resizeCanvas() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+}
+window.addEventListener('resize', resizeCanvas);
+resizeCanvas();
+
+class Particle {
+    constructor(x, y, color) {
+        this.x = x; this.y = y; this.color = color;
+        this.velocity = { x: (Math.random() - 0.5) * 10, y: (Math.random() - 0.5) * 10 };
+        this.alpha = 1; this.friction = 0.95;
+    }
+    draw() {
+        ctx.globalAlpha = this.alpha;
+        ctx.beginPath(); ctx.arc(this.x, this.y, 2.5, 0, Math.PI * 2);
+        ctx.fillStyle = this.color; ctx.fill();
+    }
+    update() {
+        this.velocity.x *= this.friction; this.velocity.y *= this.friction;
+        this.x += this.velocity.x; this.y += this.velocity.y;
+        this.alpha -= 0.012;
+    }
+}
+
+function createFirework(x, y) {
+    const colors = ['#ff4d6d', '#ff8fb1', '#ffffff', '#ffd9e8', '#ff2e63'];
+    for (let i = 0; i < 45; i++) {
+        particles.push(new Particle(x, y, colors[Math.floor(Math.random()*colors.length)]));
+    }
+}
+
+function animate() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    particles.forEach((p, i) => {
+        if (p.alpha <= 0) particles.splice(i, 1);
+        else { p.update(); p.draw(); }
+    });
+    requestAnimationFrame(animate);
+}
+
+/* 5. YES Click Action */
+const yes = document.getElementById("yes");
+const music = document.getElementById("bgmusic");
+const musicBtn = document.getElementById("musicBtn");
+const bars = document.getElementById("bars");
+
+yes.onclick = () => {
+    // Hide the proposal box and notes
+    document.getElementById("proposal").style.display = "none";
+    document.querySelectorAll(".interactive-note").forEach(note => note.style.display = "none");
+    
+    // Show the celebration screen (includes I Love You)
+    document.getElementById("celebrate").style.display = "flex";
+    
+    music.play().catch(()=>{});
+    bars.classList.remove("paused");
+    musicBtn.innerHTML = "⏸";
+
+    animate();
+    setInterval(() => {
+        createFirework(Math.random() * canvas.width, Math.random() * canvas.height * 0.6);
+    }, 500);
+};
+
+/* 6. Music Toggle */
+musicBtn.onclick = () => {
+    if(music.paused){ music.play(); bars.classList.remove("paused"); musicBtn.innerHTML="⏸"; }
+    else { music.pause(); bars.classList.add("paused"); musicBtn.innerHTML="▶"; }
+};
+</script>
+
+</body>
+</html>
